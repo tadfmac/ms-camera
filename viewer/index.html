@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>viewer (msc.mjs ver)</title>
+</head>
+<body>
+<div id="wVideo"></div>
+<div>
+  <span id="tStatConn"></span>
+</div>
+<div id="wCasters">
+</div>
+</body>
+<script type="module">
+import socketClient from "../lib/socketio-client-esm.js";
+import config from './lib/config.json' assert {type:"json"};
+import msclient from '../lib/ms-client.mjs';
+
+const hostname = window.location.hostname;
+
+let socket;
+let msc;
+
+const $tStatConn = document.querySelector('#tStatConn');
+const $wVideo = document.querySelector('#wVideo');
+const $wCasters = document.querySelector('#wCasters');
+
+(async ()=>{
+  await connect();
+})();
+
+async function connect() {
+  $tStatConn.innerHTML = 'Connecting...';
+
+  const opts = {
+    path: '/server',
+    transports: ['websocket']
+  };
+
+  const serverUrl = `https://${hostname}:${config.listenPort}`;
+  socket = socketClient(serverUrl, opts);
+
+  msc = new msclient(socket,config);
+  await msc.init("viewer");
+
+  socket.on('connect', async () => {
+    $tStatConn.innerHTML = 'Connected';
+  });
+
+  socket.on('disconnect', () => {
+    $tStatConn.innerHTML = 'Disconnected';
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error('could not connect to %s%s (%s)', serverUrl, opts.path, error.message);
+    $tStatConn.innerHTML = 'Connection failed';
+  });
+
+  socket.on("viewers", (viewers) =>{
+    console.log("viewers: ["+viewers+"]");
+  });
+
+  socket.on("updateCasters", (_casters) =>{
+    let casters = _casters;
+    $wCasters.innerHTML = "";
+    console.log("updateCaster received : ");
+    console.dir(_casters);
+    for(let cnt=0;cnt<casters.length;cnt++){
+      let id= casters[cnt].id;
+      let camsStr = "";
+      for(let cnt1=0;cnt1<casters[cnt].cams.length;cnt1++){
+        if(cnt1!=0){
+          camsStr+=","
+        }
+        camsStr+= "'"+casters[cnt].cams[cnt1]+"'";
+
+        let $button = document.createElement("button");
+        $button.id = id+"---"+casters[cnt].cams[cnt1];
+        $button.innerHTML = id+"."+casters[cnt].cams[cnt1];
+        $button.onclick = consume;
+        $wCasters.appendChild($button);
+      }
+      console.log(" ("+cnt+") id: "+id+" cams:["+camsStr+"]");
+    }
+  });
+}
+
+async function consume(e){
+  let sarr = this.id.split("---");
+  let casterId = sarr[0];
+  let camName = sarr[1];
+  console.log(">> consume() casterId:"+casterId+" camName:"+camName);
+  let stream = await msc.startConsume(casterId,camName);
+  $wVideo.innerHTML = "";
+  let $vid = document.createElement("video");
+  $vid.autoplay = true;
+  $vid.playsinline = true;
+  $vid.muted = true;
+  $vid.srcObject = stream;
+  $wVideo.appendChild($vid);
+}
+
+</script>
+</html>

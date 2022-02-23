@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>camera</title>
+</head>
+<body>
+<video id="local_video" autoplay playsinline></video>
+<div>
+<!--  <button id="btn_connect">Connect</button>-->
+  <span id="connection_status"></span>
+</div>
+<div>
+  <button id="btn_webcam">Start Webcam</button>
+  <span id="webcam_status"></span>
+</div>
+</body>
+<script type="module">
+import socketClient from "../lib/socketio-client-esm.js";
+import config from './lib/config.json' assert {type:"json"};
+import msclient from '../lib/ms-client.mjs';
+
+const hostname = window.location.hostname;
+
+let socket;
+let stream;
+let msc;
+
+const $btnConnect = document.querySelector('#btn_connect');
+const $btnWebcam = document.querySelector('#btn_webcam');
+const $txtConnection = document.querySelector('#connection_status');
+const $txtWebcam = document.querySelector('#webcam_status');
+
+//$btnConnect.addEventListener('click', connect);
+$btnWebcam.addEventListener('click', publish);
+
+(async ()=>{
+  await connect();
+})();
+
+async function connect() {
+//  $btnConnect.disabled = true;
+  $txtConnection.innerHTML = 'Connecting...';
+
+  const opts = {
+    path: '/server',
+    transports: ['websocket'],
+  };
+
+  const serverUrl = `https://${hostname}:${config.listenPort}`;
+  socket = socketClient(serverUrl, opts);
+
+  msc = new msclient(socket,config);
+  await msc.init("caster",["default"]);
+
+  socket.on('connect', async () => {
+    $txtConnection.innerHTML = 'Connected';
+  });
+
+  socket.on('disconnect', () => {
+    $txtConnection.innerHTML = 'Disconnected';
+//    $btnConnect.disabled = false;
+  });
+
+  socket.on('connect_error', (error) => {
+    console.error('could not connect to %s%s (%s)', serverUrl, opts.path, error.message);
+    $txtConnection.innerHTML = 'Connection failed';
+//    $btnConnect.disabled = false;
+  });
+}
+
+async function publish(e) {
+  try {
+    stream = await getUserMedia();
+    let producer = await msc.produceCam(stream,"default");
+//    await msc.resumeCam("default");
+    document.querySelector('#local_video').srcObject = stream;
+  } catch (err) {
+    console.log("publish() err : "+err);
+    $txtWebcam.innerHTML = 'publish() failed : '+err;
+  }
+}
+
+async function getUserMedia() {
+  return await navigator.mediaDevices.getUserMedia({ video: true });
+}
+
+</script>
+</html>
