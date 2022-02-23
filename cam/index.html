@@ -7,7 +7,6 @@
 <body>
 <video id="local_video" autoplay playsinline></video>
 <div>
-<!--  <button id="btn_connect">Connect</button>-->
   <span id="connection_status"></span>
 </div>
 <div>
@@ -31,7 +30,6 @@ const $btnWebcam = document.querySelector('#btn_webcam');
 const $txtConnection = document.querySelector('#connection_status');
 const $txtWebcam = document.querySelector('#webcam_status');
 
-//$btnConnect.addEventListener('click', connect);
 $btnWebcam.addEventListener('click', publish);
 
 (async ()=>{
@@ -39,7 +37,6 @@ $btnWebcam.addEventListener('click', publish);
 })();
 
 async function connect() {
-//  $btnConnect.disabled = true;
   $txtConnection.innerHTML = 'Connecting...';
 
   const opts = {
@@ -59,13 +56,11 @@ async function connect() {
 
   socket.on('disconnect', () => {
     $txtConnection.innerHTML = 'Disconnected';
-//    $btnConnect.disabled = false;
   });
 
   socket.on('connect_error', (error) => {
     console.error('could not connect to %s%s (%s)', serverUrl, opts.path, error.message);
     $txtConnection.innerHTML = 'Connection failed';
-//    $btnConnect.disabled = false;
   });
 }
 
@@ -73,7 +68,6 @@ async function publish(e) {
   try {
     stream = await getUserMedia();
     let producer = await msc.produceCam(stream,"default");
-//    await msc.resumeCam("default");
     document.querySelector('#local_video').srcObject = stream;
   } catch (err) {
     console.log("publish() err : "+err);
