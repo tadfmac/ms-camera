@@ -5,15 +5,46 @@
 <title>camera</title>
 </head>
 <body>
+<div class="wTitle">
+  <div id="mTitle">ms-camera sender</div>
+  <div id="connection_status"></div>
+</div>
 <video id="local_video" autoplay playsinline></video>
 <div>
-  <span id="connection_status"></span>
-</div>
-<div>
-  <button id="btn_webcam">Start Webcam</button>
+  <button id="bStart">Start</button>
+  <button id="bPause" class="hide">Pause</button>
+  <button id="bResume" class="hide">Resume</button>
+  <button id="bClose" class="hide">Close</button>
   <span id="webcam_status"></span>
 </div>
 </body>
+<style>
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+.wTitle{
+  display: flex;
+  justify-content:space-between
+  width: 100%;
+  background-color: pink;
+  padding: 2px 10px;
+}
+#mTitle{
+  width: 80%;
+}
+#connection_status{
+  top: 2px;
+  right: 10px;
+  position: fixed;
+  text-align: right;
+  width: 200px;
+}
+.hide{
+  display: none;
+}
+</style>
 <script type="module">
 import socketClient from "../lib/socketio-client-esm.js";
 import config from '../lib/config.json' assert {type:"json"};
@@ -25,18 +56,23 @@ let socket;
 let stream;
 let msc;
 
-const $btnConnect = document.querySelector('#btn_connect');
-const $btnWebcam = document.querySelector('#btn_webcam');
+const $bStart = document.querySelector('#bStart');
+const $bPause = document.querySelector('#bPause');
+const $bResume = document.querySelector('#bResume');
+const $bClose = document.querySelector('#bClose');
 const $txtConnection = document.querySelector('#connection_status');
 const $txtWebcam = document.querySelector('#webcam_status');
 
-$btnWebcam.addEventListener('click', publish);
+$bStart.addEventListener('click', startCam);
+$bPause.addEventListener('click', pauseCam);
+$bResume.addEventListener('click', resumeCam);
+$bClose.addEventListener('click', closeCam);
 
 (async ()=>{
-  await connect();
+  await init();
 })();
 
-async function connect() {
+async function init() {
   $txtConnection.innerHTML = 'Connecting...';
 
   const opts = {
@@ -64,13 +100,56 @@ async function connect() {
   });
 }
 
-async function publish(e) {
+async function pauseCam(e) {
   try {
+    $bPause.classList.add("hide");
+    $bClose.classList.remove("hide");
+    $bResume.classList.remove("hide");
+    $bStart.classList.add("hide");
+    await msc.pauseCam("default");
+  } catch (err) {
+    console.log("pause() err : "+err);
+    $txtWebcam.innerHTML = 'pause() failed : '+err;
+  }
+}
+
+async function resumeCam(e) {
+  try {
+    $bPause.classList.remove("hide");
+    $bClose.classList.remove("hide");
+    $bResume.classList.add("hide");
+    $bStart.classList.add("hide");
+    await msc.resumeCam("default");
+  } catch (err) {
+    console.log("pause() err : "+err);
+    $txtWebcam.innerHTML = 'pause() failed : '+err;
+  }
+}
+
+async function closeCam(e) {
+  try {
+    $bPause.classList.add("hide");
+    $bClose.classList.add("hide");
+    $bResume.classList.add("hide");
+    $bStart.classList.remove("hide");
+    await msc.closeCam("default");
+  } catch (err) {
+    console.log("closeCam() err : "+err);
+    $txtWebcam.innerHTML = 'closeCam() failed : '+err;
+  }
+}
+
+async function startCam(e) {
+  try {
+    $bPause.classList.remove("hide");
+    $bClose.classList.remove("hide");
+    $bResume.classList.add("hide");
+    $bStart.classList.add("hide");
     stream = await getUserMedia();
     let producer = await msc.produceCam(stream,"default");
     document.querySelector('#local_video').srcObject = stream;
   } catch (err) {
-    console.log("publish() err : "+err);
+    console.log("start() err : "+err);
     $txtWebcam.innerHTML = 'publish() failed : '+err;
   }
 }
