@@ -2,16 +2,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>viewer (msc.mjs ver)</title>
+<title>viewer</title>
+<style>
+*{
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+.wTitle{
+  display: flex;
+  justify-content:space-between
+  width: 100%;
+  background-color: skyblue;
+  padding: 2px 10px;
+}
+#mTitle{
+  width: 80%;
+}
+#tStatConn{
+  top: 2px;
+  right: 10px;
+  position: fixed;
+  text-align: right;
+  width: 200px;
+}
+</style>
 </head>
 <body>
-<div id="wVideo"></div>
-<div>
-  <span id="tStatConn"></span>
+<div class="wTitle">
+  <div id="mTitle">ms-camera viewer</div>
+  <div id="tStatConn"></div>
 </div>
 <div id="wCasters">
 </div>
-</body>
+<div id="wVideo"></div>
 <script type="module">
 import socketClient from "../lib/socketio-client-esm.js";
 import config from '../lib/config.json' assert {type:"json"};
@@ -100,6 +124,6 @@ async function consume(e){
   $vid.srcObject = stream;
   $wVideo.appendChild($vid);
 }
-
 </script>
+</body>
 </html>

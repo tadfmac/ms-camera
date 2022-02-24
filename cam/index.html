@@ -3,21 +3,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>camera</title>
-</head>
-<body>
-<div class="wTitle">
-  <div id="mTitle">ms-camera sender</div>
-  <div id="connection_status"></div>
-</div>
-<video id="local_video" autoplay playsinline></video>
-<div>
-  <button id="bStart">Start</button>
-  <button id="bPause" class="hide">Pause</button>
-  <button id="bResume" class="hide">Resume</button>
-  <button id="bClose" class="hide">Close</button>
-  <span id="webcam_status"></span>
-</div>
-</body>
 <style>
 *{
   margin: 0px;
@@ -41,10 +26,14 @@
   text-align: right;
   width: 200px;
 }
-.hide{
-  display: none;
-}
 </style>
+</head>
+<body>
+<div class="wTitle">
+  <div id="mTitle">ms-camera sender</div>
+  <div id="connection_status"></div>
+</div>
+<div id="wVideo"></div>
 <script type="module">
 import socketClient from "../lib/socketio-client-esm.js";
 import config from '../lib/config.json' assert {type:"json"};
@@ -55,21 +44,14 @@ const hostname = window.location.hostname;
 let socket;
 let stream;
 let msc;
+let cams;
 
-const $bStart = document.querySelector('#bStart');
-const $bPause = document.querySelector('#bPause');
-const $bResume = document.querySelector('#bResume');
-const $bClose = document.querySelector('#bClose');
 const $txtConnection = document.querySelector('#connection_status');
-const $txtWebcam = document.querySelector('#webcam_status');
-
-$bStart.addEventListener('click', startCam);
-$bPause.addEventListener('click', pauseCam);
-$bResume.addEventListener('click', resumeCam);
-$bClose.addEventListener('click', closeCam);
+const $wVideo = document.querySelector('#wVideo');
 
 (async ()=>{
   await init();
+  await startCam();
 })();
 
 async function init() {
@@ -100,63 +82,51 @@ async function init() {
   });
 }
 
-async function pauseCam(e) {
-  try {
-    $bPause.classList.add("hide");
-    $bClose.classList.remove("hide");
-    $bResume.classList.remove("hide");
-    $bStart.classList.add("hide");
-    await msc.pauseCam("default");
-  } catch (err) {
-    console.log("pause() err : "+err);
-    $txtWebcam.innerHTML = 'pause() failed : '+err;
-  }
-}
-
-async function resumeCam(e) {
-  try {
-    $bPause.classList.remove("hide");
-    $bClose.classList.remove("hide");
-    $bResume.classList.add("hide");
-    $bStart.classList.add("hide");
-    await msc.resumeCam("default");
-  } catch (err) {
-    console.log("pause() err : "+err);
-    $txtWebcam.innerHTML = 'pause() failed : '+err;
-  }
-}
-
-async function closeCam(e) {
-  try {
-    $bPause.classList.add("hide");
-    $bClose.classList.add("hide");
-    $bResume.classList.add("hide");
-    $bStart.classList.remove("hide");
-    await msc.closeCam("default");
-  } catch (err) {
-    console.log("closeCam() err : "+err);
-    $txtWebcam.innerHTML = 'closeCam() failed : '+err;
-  }
-}
-
 async function startCam(e) {
   try {
-    $bPause.classList.remove("hide");
-    $bClose.classList.remove("hide");
-    $bResume.classList.add("hide");
-    $bStart.classList.add("hide");
-    stream = await getUserMedia();
-    let producer = await msc.produceCam(stream,"default");
-    document.querySelector('#local_video').srcObject = stream;
+    let cams = await getDeviceCams();
+    $wVideo.innerHTML = "";
+    for(let cnt=0;cnt<cams.length;cnt++){
+      let params = {
+        video: {
+          deviceId: cams[cnt].deviceId,
+          width: { min: 640, ideal: 1280, max: 1920 }
+        }
+      };
+      cams[cnt].stream = await navigator.mediaDevices.getUserMedia(params);
+      cams[cnt].producer = await msc.produceCam(cams[cnt].stream,cams[cnt].camName);
+      const $video = document.createElement("video");
+      $video.muted = true;
+      $video.srcObject = cams[cnt].stream;
+      $video.playsInline = true;
+      $wVideo.appendChild($video);
+      await $video.play();
+    }
   } catch (err) {
     console.log("start() err : "+err);
-    $txtWebcam.innerHTML = 'publish() failed : '+err;
+    $txtConnection.innerHTML = 'startCam() failed : '+err;
   }
 }
 
-async function getUserMedia() {
-  return await navigator.mediaDevices.getUserMedia({ video: true });
+async function getDeviceCams(){
+  cams = [];
+  let devices = await navigator.mediaDevices.enumerateDevices();
+  if(devices){
+    for(let cnt=0;cnt<devices.length;cnt++){
+      if(devices[cnt].kind != "videoinput"){
+        continue;
+      }
+      let _camName;
+      if(devices[cnt].label){
+        _camName = devices[cnt].label;
+      }else{
+        _camName = devices[cnt].deviceId;
+      }
+      cams.push({deviceId:devices[cnt].deviceId, camName:_camName});
+    }
+  }
+  return cams;
 }
-
 </script>
+</body>
 </html>
