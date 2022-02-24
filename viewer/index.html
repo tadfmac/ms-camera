@@ -10,6 +10,7 @@
   box-sizing: border-box;
 }
 .wTitle{
+  position: relative;
   display: flex;
   justify-content:space-between
   width: 100%;
@@ -22,9 +23,14 @@
 #tStatConn{
   top: 2px;
   right: 10px;
-  position: fixed;
+  position: absolute;
   text-align: right;
   width: 200px;
+}
+.cVideo{
+  width: 100%;
+  object-fit: cover;
+  background-color: #000;
 }
 </style>
 </head>
@@ -121,6 +127,7 @@ async function consume(e){
   $vid.autoplay = true;
   $vid.playsinline = true;
   $vid.muted = true;
+  $vid.classList.add("cVideo");
   $vid.srcObject = stream;
   $wVideo.appendChild($vid);
 }
