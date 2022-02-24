@@ -48,7 +48,7 @@ async function connect() {
   socket = socketClient(serverUrl, opts);
 
   msc = new msclient(socket,config);
-  await msc.init("caster",["default"]);
+  await msc.init("caster");
 
   socket.on('connect', async () => {
     $txtConnection.innerHTML = 'Connected';
