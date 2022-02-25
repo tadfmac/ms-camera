@@ -72,6 +72,7 @@ async function connect() {
   socket = socketClient(serverUrl, opts);
 
   msc = new msclient(socket,config);
+  msc.onConsumerClosed = onConsumerClosed;
   await msc.init("viewer");
 
   socket.on('connect', async () => {
@@ -122,6 +123,7 @@ async function consume(e){
   let camName = sarr[1];
   console.log(">> consume() casterId:"+casterId+" camName:"+camName);
   let stream = await msc.startConsume(casterId,camName);
+
   $wVideo.innerHTML = "";
   let $vid = document.createElement("video");
   $vid.autoplay = true;
@@ -131,6 +133,11 @@ async function consume(e){
   $vid.srcObject = stream;
   $wVideo.appendChild($vid);
 }
+
+async function onConsumerClosed(data){
+  $wVideo.innerHTML = "";
+}
+
 </script>
 </body>
 </html>
