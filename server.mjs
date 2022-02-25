@@ -1,6 +1,8 @@
 import fs from 'fs';
-import https from 'https';
+import http from 'http';
 import express from 'express';
+import auth from 'basic-auth';
+import cors from 'cors';　
 import {Server} from 'socket.io';
 import config from './lib/config.json' assert {type:"json"};
 import path from 'path';
@@ -29,6 +31,8 @@ let msSrv;
 async function runExpressApp() {
   expressApp = express();
   expressApp.use(express.json());
+  expressApp.use(basicauth);
+  expressApp.use(cors());
   expressApp.use(express.static(dirname));
 
   expressApp.use((error, req, res, next) => {
@@ -45,17 +49,18 @@ async function runExpressApp() {
   });
 }
 
-async function runWebServer() {
-  const { sslKey, sslCrt } = config;
-  if (!fs.existsSync(sslKey) || !fs.existsSync(sslCrt)) {
-    console.error('SSL files are not found. check your config.js file');
-    process.exit(0);
+function basicauth(request, response, next) {
+  var user = auth(request);
+  console.log(user);
+  if (!user || config.basicAuth.id !== user.name || config.basicAuth.pass !== user.pass) {
+    response.set('WWW-Authenticate', 'Basic realm="401"');
+    return response.status(401).send();
   }
-  const tls = {
-    cert: fs.readFileSync(sslCrt),
-    key: fs.readFileSync(sslKey),
-  };
-  webServer = https.createServer(tls, expressApp);
+  return next();
+};
+
+async function runWebServer() {
+  webServer = http.createServer(expressApp);
   webServer.on('error', (err) => {
     console.error('starting web server failed:', err.message);
   });
@@ -66,7 +71,7 @@ async function runWebServer() {
       const listenIps = config.mediasoup.webRtcTransport.listenIps[0];
       const ip = listenIps.announcedIp || listenIps.ip;
       console.log('server is running');
-      console.log(`open https://${ip}:${listenPort} in your web browser`);
+      console.log(`open http://${ip}:${listenPort} in your web browser`);
       resolve();
     });
   });
@@ -75,7 +80,7 @@ async function runWebServer() {
 async function runSocketServer() {
   socketServer = new Server(webServer, {
     serveClient: false,
-    path: '/server',
+    path: '/ws',
     log: false,
   });
 }

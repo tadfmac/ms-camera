@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "basic-auth": "^2.0.1",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
     "mediasoup": "3",
     "mediasoup-client": "^3.6.34",

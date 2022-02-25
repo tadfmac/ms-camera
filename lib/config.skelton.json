@@ -1,8 +1,10 @@
 {
+  "basicAuth":{
+    "id":"your-basic-auth-id",
+    "pass":"your-basic-auth-password"
+  },
   "listenIp": "0.0.0.0",
   "listenPort": 4000,
-  "sslCrt": "your-cert-file.pem",
-  "sslKey": "your-ssl-key.pem",
   "mediasoup": {
     "worker": {
       "rtcMinPort": 10000,

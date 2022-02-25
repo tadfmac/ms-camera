@@ -78,6 +78,7 @@ import config from '../lib/config.json' assert {type:"json"};
 import msclient from '../lib/ms-client.mjs';
 
 const hostname = window.location.hostname;
+const protocol = window.location.protocol;
 
 let socket;
 let stream;
@@ -95,11 +96,11 @@ async function init() {
   $txtConnection.innerHTML = 'Connecting...';
 
   const opts = {
-    path: '/server',
+    path: '/ws',
     transports: ['websocket'],
   };
 
-  const serverUrl = `https://${hostname}:${config.listenPort}`;
+  const serverUrl = `${protocol}//${hostname}:${config.listenPort}`;
   socket = socketClient(serverUrl, opts);
 
   msc = new msclient(socket,config);
