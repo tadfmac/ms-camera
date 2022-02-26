@@ -32,6 +32,32 @@
   object-fit: cover;
   background-color: #000;
 }
+.wButton{
+  width: 160px;
+
+}
+.camButton{
+  width: 200px;
+  height: 100px;
+  font-size: 12px;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 10px;
+  appearance: none;
+  text-align: left;
+  border-radius: 10px;
+  vertical-align: top;
+  background-size: cover;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
+#wCasters{
+  padding-top: 10px;
+  padding-left: 10px;
+}
 </style>
 </head>
 <body>
@@ -103,18 +129,16 @@ console.log(serverUrl);
       let id= casters[cnt].id;
       let camsStr = "";
       for(let cnt1=0;cnt1<casters[cnt].cams.length;cnt1++){
-        if(cnt1!=0){
-          camsStr+=","
-        }
-        camsStr+= "'"+casters[cnt].cams[cnt1]+"'";
-
         let $button = document.createElement("button");
-        $button.id = id+"---"+casters[cnt].cams[cnt1];
-        $button.innerHTML = id+"."+casters[cnt].cams[cnt1];
+        $button.id = id+"---"+casters[cnt].cams[cnt1].camId;
+        $button.innerHTML = id+"<br>"+casters[cnt].cams[cnt1].camName;
         $button.onclick = consume;
+        let thumbnailName = encodeURI(id+"-"+casters[cnt].cams[cnt1].camId+'.jpg');
+        console.log(thumbnailName);
+        $button.classList.add("camButton");
+        $button.style.backgroundImage = "url("+serverUrl+config.thumbnailPath+"/"+thumbnailName+")";
         $wCasters.appendChild($button);
       }
-      console.log(" ("+cnt+") id: "+id+" cams:["+camsStr+"]");
     }
   });
 }
@@ -122,9 +146,9 @@ console.log(serverUrl);
 async function consume(e){
   let sarr = this.id.split("---");
   let casterId = sarr[0];
-  let camName = sarr[1];
-  console.log(">> consume() casterId:"+casterId+" camName:"+camName);
-  let stream = await msc.startConsume(casterId,camName);
+  let camId = sarr[1];
+  console.log(">> consume() casterId:"+casterId+" camId:"+camId);
+  let stream = await msc.startConsume(casterId,camId);
 
   $wVideo.innerHTML = "";
   let $vid = document.createElement("video");

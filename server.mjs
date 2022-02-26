@@ -21,7 +21,7 @@ let msSrv;
     await runExpressApp();
     await runWebServer();
     await runSocketServer();
-    msSrv = new msServer(socketServer,config);
+    msSrv = new msServer(socketServer,config,dirname);
     await msSrv.init();
   } catch (err) {
     console.error(err);

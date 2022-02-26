@@ -132,33 +132,33 @@ async function startCam(e) {
   try {
     await getDeviceCams();
     $wVideoArea.innerHTML = "";
-    Object.keys(cams).forEach(async (_camName)=>{
+    Object.keys(cams).forEach(async (_camId)=>{
       let params = {
         video: {
-          deviceId: cams[_camName].deviceId,
+          deviceId: _camId,
           width: { min: 640, ideal: 1920, max: 1920 }
         }
       };
-      cams[_camName].stream = await navigator.mediaDevices.getUserMedia(params);
-      cams[_camName].producer = await msc.produceCam(cams[_camName].stream,_camName);
+      cams[_camId].stream = await navigator.mediaDevices.getUserMedia(params);
+      cams[_camId].producer = await msc.produceCam(cams[_camId].stream,_camId,cams[_camId].camName);
       const $wVideo = document.createElement("div");
       $wVideo.classList.add("wVideo");
       const $video = document.createElement("video");
       $video.muted = true;
-      $video.srcObject = cams[_camName].stream;
+      $video.srcObject = cams[_camId].stream;
       $video.classList.add("cVideo");
-      $video.id = "cVideo-"+cams[_camName].deviceId;
+      $video.id = "cVideo-"+cams[_camId].deviceId;
       $video.playsInline = true;
       await $video.play();
       $wVideo.appendChild($video);
       const $vName = document.createElement("div");
-      $vName.innerHTML = _camName;
+      $vName.innerHTML = cams[_camId].camName;
       $vName.classList.add("cVname");
       $wVideo.appendChild($vName);
       const $wViewer = document.createElement("div");
       $wViewer.innerHTML = "";
       $wViewer.classList.add("wViewer");
-      $wViewer.id = "wViewer-"+cams[_camName].deviceId;
+      $wViewer.id = "wViewer-"+_camId;
       $wVideo.appendChild($wViewer);
       $wVideoArea.appendChild($wVideo);
     });
@@ -182,7 +182,7 @@ async function getDeviceCams(){
       }else{
         _camName = devices[cnt].deviceId;
       }
-      cams[_camName] = {deviceId:devices[cnt].deviceId, camName:_camName};
+      cams[devices[cnt].deviceId] = {deviceId:devices[cnt].deviceId, camName:_camName};
     }
   }
   return cams;
@@ -190,9 +190,7 @@ async function getDeviceCams(){
 
 async function onUpdateViewer(data){
   console.log("onUpdateViewer()");
-  let devId = cams[data.camName].deviceId;
-  console.log("devId : "+devId);
-  let $wViewer = document.querySelector("#wViewer-"+devId);
+  let $wViewer = document.querySelector("#wViewer-"+data.camId);
   $wViewer.innerHTML = "";
   Object.keys(data.viewers).forEach((_Viewer)=>{
     const $cViewer = document.createElement("div");
