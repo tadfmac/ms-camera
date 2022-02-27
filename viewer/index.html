@@ -85,6 +85,8 @@ let msc;
 const $tStatConn = document.querySelector('#tStatConn');
 const $wVideo = document.querySelector('#wVideo');
 const $wCasters = document.querySelector('#wCasters');
+const $vid = document.querySelector(".cVideo");
+
 
 (async ()=>{
   await connect();
@@ -151,7 +153,6 @@ async function consume(e){
   let casterId = sarr[0];
   let camId = sarr[1];
 
-  let $vid = document.querySelector(".cVideo");
 
 //  $wVideo.innerHTML = "";
 //  let $vid = document.createElement("video");
@@ -170,7 +171,8 @@ async function consume(e){
 }
 
 async function onConsumerClosed(data){
-//  $wVideo.innerHTML = "";
+  $vid.pause();
+  $vid.srcObject = null;
 }
 
 </script>
