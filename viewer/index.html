@@ -67,7 +67,9 @@
 </div>
 <div id="wCasters">
 </div>
-<div id="wVideo"></div>
+<div id="wVideo">
+  <video class="cVideo" autoplay playsinline muted>
+</div>
 <script type="module">
 import socketClient from "../lib/socketio-client-esm.js";
 import config from '../lib/config.js';
@@ -148,27 +150,25 @@ async function consume(e){
   let sarr = this.id.split("---");
   let casterId = sarr[0];
   let camId = sarr[1];
-  $wVideo.innerHTML = "";
-  let $vid = document.createElement("video");
-  $vid.autoplay = true;
-  $vid.playsinline = true;
-  $vid.muted = true;
-  $vid.classList.add("cVideo");
-  $wVideo.appendChild($vid);
-//  $vid.play();
+
+  let $vid = document.querySelector(".cVideo");
+
+//  $wVideo.innerHTML = "";
+//  let $vid = document.createElement("video");
+//  $vid.autoplay = true;
+//  $vid.playsinline = true;
+//  $vid.muted = true;
+//  $vid.classList.add("cVideo");
+//  $wVideo.appendChild($vid);
 
   console.log(">> consume() casterId:"+casterId+" camId:"+camId);
   let stream = await msc.startConsume(casterId,camId);
-
-  $vid.muted = "muted";
-  $vid.autoplay = "autoplay";
-  $vid.playsinline = "playsinline";
   $vid.srcObject = stream;
-//  $vid.play();
+  $vid.play();
 }
 
 async function onConsumerClosed(data){
-  $wVideo.innerHTML = "";
+//  $wVideo.innerHTML = "";
 }
 
 </script>
