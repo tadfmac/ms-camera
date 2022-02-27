@@ -171,8 +171,8 @@ async function consume(e){
 }
 
 async function onConsumerClosed(data){
-  $vid.pause();
   $vid.srcObject = null;
+  $vid.pause();
 }
 
 </script>
