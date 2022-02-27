@@ -160,9 +160,11 @@ async function consume(e){
   console.log(">> consume() casterId:"+casterId+" camId:"+camId);
   let stream = await msc.startConsume(casterId,camId);
 
+  $vid.muted = "muted";
+  $vid.autoplay = "autoplay";
+  $vid.playsinline = "playsinline";
   $vid.srcObject = stream;
-  $vid.playsinline = true;
-  $vid.play();
+//  $vid.play();
 }
 
 async function onConsumerClosed(data){
