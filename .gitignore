@@ -4,4 +4,4 @@ package-lock.json
 node_modules/
 lib/config.js
 lib/config-server.json
-samnail/*
+thumbnail/*

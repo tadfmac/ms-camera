@@ -201,6 +201,40 @@ async function onUpdateViewer(data){
   });
 }
 
+class ReloadTimer{
+  constructor(){
+    this.interval = null;
+    this.hour = null;
+  }
+  set(hour,min){
+    this.hour = hour;
+    this.min = min;
+  }
+  start(){
+    localStorage.setItem('reloadTime',JSON.stringify({time:Date.now()}));
+    this.interval = setInterval((e)=>{
+      let date = new Date();
+      let value = Date.now();
+      let hour = date.getHours();
+      let min = date.getMinutes();
+      let saveData = JSON.parse(localStorage.getItem('reloadTime'));
+      let avTime = saveData.time + (60 * 1000);
+      if((hour == this.hour)&&(min == this.min)&&(value > avTime)){
+        localStorage.setItem('reloadTime',JSON.stringify({time:value}));
+        window.location.href = window.location.href;
+      }
+    },5000);
+  }
+  reset(){
+    stopInterval(this.interval);
+  }
+}
+
+// 1日に1回リロードさせる
+let timer = new ReloadTimer();
+timer.set(1,30); // 01:30 にリロード
+timer.start();
+
 </script>
 </body>
 </html>
