@@ -155,7 +155,7 @@ async function consume(e){
   $vid.muted = true;
   $vid.classList.add("cVideo");
   $wVideo.appendChild($vid);
-  $vid.play();
+//  $vid.play();
 
   console.log(">> consume() casterId:"+casterId+" camId:"+camId);
   let stream = await msc.startConsume(casterId,camId);
