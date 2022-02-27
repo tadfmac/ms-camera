@@ -161,6 +161,7 @@ async function consume(e){
   let stream = await msc.startConsume(casterId,camId);
 
   $vid.srcObject = stream;
+  $vid.playsinline = true;
   $vid.play();
 }
 
