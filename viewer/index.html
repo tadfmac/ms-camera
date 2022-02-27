@@ -148,17 +148,20 @@ async function consume(e){
   let sarr = this.id.split("---");
   let casterId = sarr[0];
   let camId = sarr[1];
-  console.log(">> consume() casterId:"+casterId+" camId:"+camId);
-  let stream = await msc.startConsume(casterId,camId);
-
   $wVideo.innerHTML = "";
   let $vid = document.createElement("video");
   $vid.autoplay = true;
   $vid.playsinline = true;
   $vid.muted = true;
   $vid.classList.add("cVideo");
-  $vid.srcObject = stream;
   $wVideo.appendChild($vid);
+  $vid.play();
+
+  console.log(">> consume() casterId:"+casterId+" camId:"+camId);
+  let stream = await msc.startConsume(casterId,camId);
+
+  $vid.srcObject = stream;
+  $vid.play();
 }
 
 async function onConsumerClosed(data){
