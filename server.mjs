@@ -4,7 +4,7 @@ import express from 'express';
 import auth from 'basic-auth';
 import cors from 'cors';　
 import {Server} from 'socket.io';
-import config from './lib/config.json' assert {type:"json"};
+import config from './lib/config.js';
 import path from 'path';
 import msServer from './lib/ms-server.mjs';
 

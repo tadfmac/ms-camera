@@ -1,10 +1,11 @@
 {
-  "name": "remote-camera",
+  "name": "ms-camera",
   "version": "1.0.0",
   "description": "Mediasoup Sample App",
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "start": "node server.mjs",
     "start": "node server.mjs",
     "build": "rollup -c"
   },

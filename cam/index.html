@@ -80,11 +80,12 @@
 <div id="wVideoArea"></div>
 <script type="module">
 import socketClient from "../lib/socketio-client-esm.js";
-import config from '../lib/config.json' assert {type:"json"};
+import config from '../lib/config.js';
 import msclient from '../lib/ms-client.mjs';
 
 const hostname = window.location.hostname;
 const protocol = window.location.protocol;
+const port = window.location.port;
 
 let socket;
 let stream;
@@ -106,7 +107,7 @@ async function init() {
     transports: ['websocket'],
   };
 
-  const serverUrl = `${protocol}//${hostname}:${config.listenPort}`;
+  const serverUrl = `${protocol}//${hostname}:${port}`;
   socket = socketClient(serverUrl, opts);
 
   msc = new msclient(socket,config);
