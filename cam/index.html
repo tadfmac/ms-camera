@@ -177,6 +177,9 @@ async function getDeviceCams(){
       if(devices[cnt].kind != "videoinput"){
         continue;
       }
+      if(devices[cnt].label == "bcm2835-isp"){ // WA: Raspi3カメラは対象外にしとく。
+        continue;
+      }
       let _camName;
       if(devices[cnt].label){
         _camName = devices[cnt].label;
