@@ -172,6 +172,7 @@ async function startCam(e) {
 async function getDeviceCams(){
   cams = {};
   let devices = await navigator.mediaDevices.enumerateDevices();
+  console.dir(devices);
   if(devices){
     for(let cnt=0;cnt<devices.length;cnt++){
       if(devices[cnt].kind != "videoinput"){
