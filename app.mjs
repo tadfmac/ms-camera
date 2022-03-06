@@ -34,8 +34,13 @@ function ipFilter(req,res,next){
 //    console.dir(req);
     console.log("useProxyServer == true");
     console.log("x-real-ip : "+req.headers["x-real-ip"]);
-    console.log("x-forwarded-for : "+req.headers["x-forwarded-for"]);
-    next();
+    let ip = req.headers["x-real-ip"];
+    for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
+      if(config.ipWhiteList[cnt] == ip){
+        next();
+      }
+    }
+    res.status("401").send();
   }else{
     return IpFilter(AllowList,{mode:'allow'})
   }
