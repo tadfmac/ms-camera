@@ -31,8 +31,10 @@ let msSrv;
 
 function ipFilter(req,res,next){
   if(config.useProxyServer == true){
-    console.dir(req);
+//    console.dir(req);
     console.log("useProxyServer == true");
+    console.log("x-real-ip : "+req.headers["x-real-ip"]);
+    console.log("x-forwarded-for : "+req.headers["x-forwarded-for"]);
     next();
   }else{
     return IpFilter(AllowList,{mode:'allow'})
