@@ -45,7 +45,7 @@ async function runExpressApp() {
   app.use(cors());
   app.use("/viewer", basicauth, express.static(dirname+"/www/viewer"));
   app.use("/thumbnail", basicauth, express.static(dirname+"/www/thumbnail"));
-  app.use("/cam", IpFilter(config.ipWhiteList,{mode:'allow'}), express.static(dirname+"/www/cam"));
+  app.use("/cam", ipFilter, express.static(dirname+"/www/cam"));
   app.use("/lib", express.static(dirname+"/www/lib"));
 
   app.use((error, req, res, next) => {
