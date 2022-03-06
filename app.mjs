@@ -37,10 +37,10 @@ function ipFilter(req,res,next){
     let ip = req.headers["x-real-ip"];
     for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
       if(config.ipWhiteList[cnt] == ip){
-        next();
+        return next();
       }
     }
-    res.status("401").send();
+    return res.status("401").send();
   }else{
     return IpFilter(AllowList,{mode:'allow'})
   }
