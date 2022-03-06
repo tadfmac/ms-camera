@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "Mediasoup Sample App",
   "type": "module",
-  "main": "server.js",
+  "main": "app.mjs",
   "scripts": {
-    "start": "node server.mjs",
+    "start": "node app.mjs",
     "build": "rollup -c"
   },
   "author": "",
