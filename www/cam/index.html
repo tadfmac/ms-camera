@@ -137,7 +137,7 @@ async function startCam(e) {
       let params = {
         video: {
           deviceId: _camId,
-          width: { min: 640, ideal: 1920, max: 1920 }
+          width: { min: 640, ideal: 1280, max: 1920 }
         }
       };
       cams[_camId].stream = await navigator.mediaDevices.getUserMedia(params);
