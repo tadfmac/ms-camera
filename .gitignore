@@ -4,4 +4,6 @@ package-lock.json
 node_modules/
 lib/config.js
 www/lib/config.js
-thumbnail/*
+www/thumbnail/*
+config.json
+
