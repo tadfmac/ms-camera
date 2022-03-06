@@ -29,6 +29,16 @@ let msSrv;
   }
 })();
 
+function ipFilter(req,res,next){
+  if(config.useProxyServer == true){
+    console.dir(req);
+    console.log("useProxyServer == true");
+    next();
+  }else{
+    return IpFilter(AllowList,{mode:'allow'})
+  }
+}
+
 async function runExpressApp() {
   app = express();
   app.use(express.json());
