@@ -7,13 +7,14 @@ import {Server} from 'socket.io';
 import config from './lib/config.js';
 import path from 'path';
 import msServer from './lib/ms-server.mjs';
+import {IpFilter} from 'express-ipfilter';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // Global variables
 let webServer;
 let socketServer;
-let expressApp;
+let app;
 let msSrv;
 
 (async () => {
@@ -29,18 +30,18 @@ let msSrv;
 })();
 
 async function runExpressApp() {
-  expressApp = express();
-  expressApp.use(express.json());
-  expressApp.use(basicauth);
-  expressApp.use(cors());
-  expressApp.use(express.static(dirname));
+  app = express();
+  app.use(express.json());
+  app.use(cors());
+  app.use("/viewer", basicauth, express.static(dirname+"/www/viewer"));
+  app.use("/thumbnail", basicauth, express.static(dirname+"/www/thumbnail"));
+  app.use("/cam", IpFilter(config.ipWhiteList,{mode:'allow'}), express.static(dirname+"/www/cam"));
+  app.use("/lib", express.static(dirname+"/www/lib"));
 
-  expressApp.use((error, req, res, next) => {
+  app.use((error, req, res, next) => {
     if (error) {
       console.warn('Express app error,', error.message);
-
       error.status = error.status || (error.name === 'TypeError' ? 400 : 500);
-
       res.statusMessage = error.message;
       res.status(error.status).send(String(error));
     } else {
@@ -60,7 +61,7 @@ function basicauth(request, response, next) {
 };
 
 async function runWebServer() {
-  webServer = http.createServer(expressApp);
+  webServer = http.createServer(app);
   webServer.on('error', (err) => {
     console.error('starting web server failed:', err.message);
   });

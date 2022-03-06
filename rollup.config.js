@@ -11,7 +11,7 @@ export default [
   {
     input: 'libsrc/mediasoup-client-module.js',
     output: [
-      { file: 'lib/mediasoup-client-esm.js', format: 'es' }
+      { file: 'www/lib/mediasoup-client-esm.js', format: 'es' }
     ],
     plugins: [
       builtins(),
@@ -29,7 +29,7 @@ export default [
   {
     input: 'libsrc/socketio-client-module.js',
     output: [
-      { file: 'lib/socketio-client-esm.js', format: 'es' }
+      { file: 'www/lib/socketio-client-esm.js', format: 'es' }
     ],
     plugins: [
       builtins(),

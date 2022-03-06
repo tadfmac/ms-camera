@@ -6,7 +6,6 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.mjs",
-    "start": "node server.mjs",
     "build": "rollup -c"
   },
   "author": "",
@@ -15,6 +14,7 @@
     "basic-auth": "^2.0.1",
     "cors": "^2.8.5",
     "express": "^4.16.4",
+    "express-ipfilter": "^1.2.0",
     "mediasoup": "3",
     "mediasoup-client": "^3.6.34",
     "rollup": "^1.10.1",
