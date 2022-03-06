@@ -172,6 +172,7 @@ export default class MSClient {
       file = null;
 
       const params = { track , appData:{camid, camName:_camName}};
+      params.codec = this.device.rtpCapabilities.codecs.find(codec => codec.mimeType.toLowerCase() === "video/h264");
       this.caster.cams[camid].producer = await this.caster.transport.produce(params);
       this.caster.cams[camid].producer.pause(); // 最初はpauseしとく -> call
 
