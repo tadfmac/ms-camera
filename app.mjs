@@ -7,7 +7,6 @@ import {Server} from 'socket.io';
 import config from './lib/config.js';
 import path from 'path';
 import msServer from './lib/ms-server.mjs';
-import {IpFilter} from 'express-ipfilter';
 
 const dirname = path.dirname(new URL(import.meta.url).pathname);
 
@@ -42,7 +41,14 @@ function ipFilter(req,res,next){
     }
     return res.status("401").send();
   }else{
-    return IpFilter(AllowList,{mode:'allow'})
+    let ip = req.connection.remoteAddress;
+    console.log(ip);
+    for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
+      if(config.ipWhiteList[cnt] == ip){
+        return next();
+      }
+    }
+    return res.status("401").send();
   }
 }
 
