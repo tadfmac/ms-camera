@@ -7,7 +7,7 @@ A minimal Client/Server app based on Mediasoup and Socket.io
 ## Dependencies
 
 * [Mediasoup v3 requirements](https://mediasoup.org/documentation/v3/mediasoup/installation/#requirements)
-* Node.js >= v17.5
+* Node.js >= v22.0
 * [rollup.js](https://rollupjs.org/guide/en/)
 * [socket.io](https://socket.io)
 * [express](https://expressjs.com)
