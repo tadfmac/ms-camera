@@ -1,0 +1,34 @@
+{
+  "name": "ms-camera",
+  "version": "1.0.0",
+  "description": "Mediasoup Sample App",
+  "type": "module",
+  "main": "app.mjs",
+  "scripts": {
+    "start": "node app.mjs",
+    "build": "rollup -c"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "basic-auth": "^2.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+/*    "express-ipfilter": "^1.2.0", */
+    "mediasoup": "3",
+    "mediasoup-client": "^3.6.34",
+/*    "rollup": "^4.1.1", */
+    "rollup-plugin-cjs-es": "^0.7.0",
+    "rollup-plugin-commonjs": "^9.3.4",
+    "rollup-plugin-json": "^4.0.0",
+    "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
+    "rollup-plugin-node-resolve": "^4.2.3",
+    "rollup-plugin-terser": "^7.0.2",
+    "socket.io": "^4.1.2",
+    "socket.io-client": "^4.1.2"
+  },
+  "devDependencies": {
+    "requirejs": "^2.3.6"
+  }
+}

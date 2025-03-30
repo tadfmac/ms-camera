@@ -29,27 +29,18 @@ let msSrv;
 })();
 
 function ipFilter(req,res,next){
+  let ip;
   if(config.useProxyServer == true){
-//    console.dir(req);
-    console.log("useProxyServer == true");
-    console.log("x-real-ip : "+req.headers["x-real-ip"]);
-    let ip = req.headers["x-real-ip"];
-    for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
-      if(config.ipWhiteList[cnt] == ip){
-        return next();
-      }
-    }
-    return res.status("401").send();
+    ip = req.headers["x-real-ip"];
   }else{
-    let ip = req.connection.remoteAddress;
-    console.log(ip);
-    for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
-      if(config.ipWhiteList[cnt] == ip){
-        return next();
-      }
-    }
-    return res.status("401").send();
+    ip = req.connection.remoteAddress;
   }
+  for(let cnt=0;cnt<config.ipWhiteList.length;cnt++){
+    if(config.ipWhiteList[cnt] == ip){
+      return next();
+    }
+  }
+  return res.status("401").send();
 }
 
 async function runExpressApp() {

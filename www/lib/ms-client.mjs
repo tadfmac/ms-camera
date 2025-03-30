@@ -167,7 +167,9 @@ export default class MSClient {
       }
       const track = stream.getVideoTracks()[0];
 
-      let file = await this.takeThumbnail(track,480);
+      let file = await this.takeThumbnail(track,128);
+console.log("@@@@@@@@@");
+console.dir(file);
       await this.request('saveThumbnail', { casterId:this.caster.id, camId:camid , file });
       file = null;
 
@@ -183,21 +185,19 @@ export default class MSClient {
   }
 
   async takeThumbnail(track,width){
+    console.log("takeThumbnail() called");
     await this.wait(500);
     const imageCapture = new ImageCapture(track);
-    let blob = await new Promise(async (resolve)=>{
+    let data = await new Promise(async (resolve)=>{
       let bitmap = await imageCapture.grabFrame();
       const $cvs = document.createElement('canvas');
       let ctx = $cvs.getContext('2d');
       $cvs.width = width;
       $cvs.height = Math.floor(bitmap.height / (bitmap.width / width));
       $cvs.getContext('2d').drawImage(bitmap,0,0,bitmap.width,bitmap.height,0,0,$cvs.width,$cvs.height);
-      $cvs.toBlob((blob)=>{
-        resolve(blob);
-      }, 'image/jpeg');
+      resolve($cvs.toDataURL("image/jpeg")); 
     });
-    const newFile = new File([blob], "ss.jpg", { type: "image/jpeg" });
-    return newFile;
+    return data;
   }
 
   async closeCam(camid){
