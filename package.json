@@ -12,7 +12,7 @@
     "node": ">=22.0.0"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "rollup": "^4.38.0",
     "@rollup/plugin-commonjs": "^28.0.3",
